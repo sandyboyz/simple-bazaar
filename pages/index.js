@@ -17,7 +17,7 @@ export default function Home(props) {
             {props.posts.map(val => {
               return <div key={val.id} className='bg-white rounded shadow-md p-4'>
                 <div>
-                  <img className='rounded-lg h-56 w-full' src={`http://localhost:1337${val.image.url}`}/>
+                  <img className='rounded-lg h-56 w-full' src={`https://wawo-bazaar.herokuapp.com${val.image.url}`}/>
 
                 </div>
                 <div className='p-3'>
@@ -51,7 +51,7 @@ export default function Home(props) {
 
 export async function getStaticProps() {
   // Call an external API endpoint to get posts
-  const res = await fetch('http://localhost:1337/foods');
+  const res = await fetch('https://wawo-bazaar.herokuapp.com/foods');
   const posts = await res.json();
 
   // By returning { props: posts }, the Blog component

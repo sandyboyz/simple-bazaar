@@ -1,7 +1,10 @@
 import Head from 'next/head'
+// import Path, { resolve } from 'path';
+import Axios from 'axios';
+import Fse from 'fs-extra';
 
 export default function Home(props) {
-  console.log(props)
+  // console.log(props)
   return (
     <React.Fragment>
       <Head>
@@ -17,7 +20,7 @@ export default function Home(props) {
             {props.posts.map(val => {
               return <div key={val.id} className='bg-white rounded shadow-md p-4'>
                 <div>
-                  <img className='rounded-lg h-56 w-full' src={`https://wawo-bazaar.herokuapp.com${val.image.url}`}/>
+                  <img className='rounded-lg h-56 w-full' src={`/${val.image.url}`}/>
 
                 </div>
                 <div className='p-3'>
@@ -54,11 +57,62 @@ export async function getStaticProps() {
   const res = await fetch('https://wawo-bazaar.herokuapp.com/foods');
   const posts = await res.json();
 
+  async function downloadImage (uri) {  
+    const url = `https://wawo-bazaar.herokuapp.com${uri}`;
+    // const path = Path.resolve('./')
+    const imageName = uri.replace(/.+\/(.+?\.jpeg$)/, '$1');
+
+    const exists = await new Promise(resolve => Fse.access(`public/${imageName}`, err => {
+      if (err) resolve(0);
+      else resolve(1);
+    }));
+
+    if (exists) return;
+    
+
+    const writer = Fse.createWriteStream(`./public/${imageName}`);
+  
+    const response = await Axios({
+      url,
+      method: 'GET',
+      responseType: 'stream'
+    })
+  
+    response.data.pipe(writer);
+  
+    return new Promise((resolve, reject) => {
+      writer.on('finish', resolve)
+      writer.on('error', reject)
+    })
+  }
+  
+  posts.forEach(async val => {
+    await downloadImage(val.image.url);
+  })
+
+  const cdnImages = posts.map(val => val.image.url.replace(/.+\/(.+?\.jpeg$)/, '$1'));
+  const file = (await Fse.readdir('./public')).filter(val => /\.(jpeg|jpg)$/.test(val) && !cdnImages.includes(val));
+
+  file.forEach(async val => {
+    await Fse.remove(`./public/${val}`);
+  });
+
+  // console.log(cdnImages, file);
+  // downloadImage() 
+  // console.log(posts); 
   // By returning { props: posts }, the Blog component
   // will receive `posts` as a prop at build time
   return {
     props: {
-      posts,
+      posts: posts.map(val => {
+        return {
+          ...val,
+          image: {
+            ...val.image,
+            url: val.image.url.replace(/.+\/(.+?\.jpeg$)/, '$1')
+          }
+        }
+      }),
     },
   }
 }

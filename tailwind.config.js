@@ -1,5 +1,7 @@
 module.exports = {
-  purge: [],
+  purge: [
+    './pages/**/*.js'
+  ],
   target: 'relaxed',
   prefix: '',
   important: false,

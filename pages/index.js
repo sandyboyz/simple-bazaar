@@ -77,31 +77,25 @@ export async function getStaticProps() {
       method: 'GET',
       responseType: 'stream'
     })
-  
+    
     response.data.pipe(writer);
-  
     return new Promise((resolve, reject) => {
       writer.on('finish', resolve)
       writer.on('error', reject)
     })
   }
-  
-  posts.forEach(async val => {
-    await downloadImage(val.image.url);
-  })
 
+  await Promise.all(posts.map(val => {
+    return downloadImage(val.image.url);
+  }));
+  
   const cdnImages = posts.map(val => val.image.url.replace(/.+\/(.+?\.jpeg$)/, '$1'));
   const file = (await Fse.readdir('./public')).filter(val => /\.(jpeg|jpg)$/.test(val) && !cdnImages.includes(val));
 
-  file.forEach(async val => {
-    await Fse.remove(`./public/${val}`);
-  });
+  await Promise.all(file.map(val => {
+    return Fse.remove(`./public/${val}`);
+  }));
 
-  // console.log(cdnImages, file);
-  // downloadImage() 
-  // console.log(posts); 
-  // By returning { props: posts }, the Blog component
-  // will receive `posts` as a prop at build time
   return {
     props: {
       posts: posts.map(val => {

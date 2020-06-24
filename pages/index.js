@@ -21,7 +21,7 @@ export default function Home(props) {
               console.log(val.image.url);
               return <div key={val.id} className='bg-white rounded shadow-md p-4'>
                 <div>
-                  <img className='rounded-lg h-56 w-full' src={require(`../images/${val.image.url}?resize&size=300`)}/>
+                  <img className='rounded-lg h-56 w-full' src={require(`../images/${val.image.url}?trace&resize&size=300`)}/>
 
                 </div>
                 <div className='p-3'>

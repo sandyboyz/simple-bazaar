@@ -12,15 +12,16 @@ export default function Home(props) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div>
-        <div className='container m-auto mt-4'>
+        <div className='container m-auto mt-4 '>
           <h1 className='text-4xl font-bold tracking-wide font-sans text-gray-800 mb-4'>
             Welcome to Bazaar
           </h1>
           <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
             {props.posts.map(val => {
+              console.log(val.image.url);
               return <div key={val.id} className='bg-white rounded shadow-md p-4'>
                 <div>
-                  <img className='rounded-lg h-56 w-full' src={`/${val.image.url}`}/>
+                  <img className='rounded-lg h-56 w-full' src={require(`../images/${val.image.url}`)}/>
 
                 </div>
                 <div className='p-3'>
@@ -62,7 +63,7 @@ export async function getStaticProps() {
     // const path = Path.resolve('./')
     const imageName = uri.replace(/.+\/(.+?\.jpeg$)/, '$1');
 
-    const exists = await new Promise(resolve => Fse.access(`public/${imageName}`, err => {
+    const exists = await new Promise(resolve => Fse.access(`images/${imageName}`, err => {
       if (err) resolve(0);
       else resolve(1);
     }));
@@ -70,7 +71,7 @@ export async function getStaticProps() {
     if (exists) return;
     
 
-    const writer = Fse.createWriteStream(`./public/${imageName}`);
+    const writer = Fse.createWriteStream(`./images/${imageName}`);
   
     const response = await Axios({
       url,
@@ -90,10 +91,10 @@ export async function getStaticProps() {
   }));
   
   const cdnImages = posts.map(val => val.image.url.replace(/.+\/(.+?\.jpeg$)/, '$1'));
-  const file = (await Fse.readdir('./public')).filter(val => /\.(jpeg|jpg)$/.test(val) && !cdnImages.includes(val));
+  const file = (await Fse.readdir('./images')).filter(val => /\.(jpeg|jpg)$/.test(val) && !cdnImages.includes(val));
 
   await Promise.all(file.map(val => {
-    return Fse.remove(`./public/${val}`);
+    return Fse.remove(`./images/${val}`);
   }));
 
   return {

@@ -24,6 +24,7 @@
     "next-optimized-images": "^2.6.1",
     "react": "16.13.1",
     "react-dom": "16.13.1",
+    "react-lazy-load-image-component": "^1.5.0",
     "responsive-loader": "^1.2.0",
     "svg-sprite-loader": "^5.0.0",
     "webp-loader": "^0.6.0"

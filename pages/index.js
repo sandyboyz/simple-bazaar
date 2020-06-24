@@ -2,9 +2,11 @@ import Head from 'next/head'
 // import Path, { resolve } from 'path';
 import Axios from 'axios';
 import Fse from 'fs-extra';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
+
 
 export default function Home(props) {
-  if (typeof window !== 'undefined' && props.posts.length > 0){
+  // console.log(props)
   return (
     <React.Fragment>
       <Head>
@@ -17,11 +19,25 @@ export default function Home(props) {
             Welcome to Bazaar
           </h1>
           <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
-            {typeof window !== 'undefined' && props.posts.map(val => {
-              console.log(val.image.url);
+            {props.posts.map(val => {
               return <div key={val.id} className='bg-white rounded shadow-md p-4'>
                 <div>
-                  <img className='rounded-lg h-56 w-full' src={require(`../images/${val.image.url}?trace&resize&size=300`)}/>
+                  <div>
+                    <LazyLoadImage 
+                    
+                    alt={val.image.url}
+                    src={`/${val.image.url}`}
+                    effect="blur"
+                    // delayMethod={'throttle'}
+                    // delayTime={2000}
+                    // height='56px'
+                    // width='100%'
+                    style={{height: '14rem', width: '100%'}}
+                    // wrapperClassName='rounded-lg'
+                    // className='rounded-lg h-56 w-fuull'
+                    />
+                  </div>
+                  {/* <img className='rounded-lg h-56 w-full' src={`/${val.image.url}`}/> */}
 
                 </div>
                 <div className='p-3'>
@@ -51,8 +67,6 @@ export default function Home(props) {
     </React.Fragment>
      
   )
-  }
-  return (<div>Test</div>)
 }
 
 export async function getStaticProps() {
@@ -65,7 +79,7 @@ export async function getStaticProps() {
     // const path = Path.resolve('./')
     const imageName = uri.replace(/.+\/(.+?\.jpeg$)/, '$1');
 
-    const exists = await new Promise(resolve => Fse.access(`./images/${imageName}`, err => {
+    const exists = await new Promise(resolve => Fse.access(`public/${imageName}`, err => {
       if (err) resolve(0);
       else resolve(1);
     }));
@@ -73,7 +87,7 @@ export async function getStaticProps() {
     if (exists) return;
     
 
-    const writer = Fse.createWriteStream(`./images/${imageName}`);
+    const writer = Fse.createWriteStream(`./public/${imageName}`);
   
     const response = await Axios({
       url,
@@ -92,20 +106,14 @@ export async function getStaticProps() {
     return downloadImage(val.image.url);
   }));
   
+  const cdnImages = posts.map(val => val.image.url.replace(/.+\/(.+?\.jpeg$)/, '$1'));
+  const file = (await Fse.readdir('./public')).filter(val => /\.(jpeg|jpg)$/.test(val) && !cdnImages.includes(val));
 
-  await new Promise(resolve => {
-    setTimeout(() => {
-      resolve(1);
-    }, 5000)
-  })
-  // const cdnImages = posts.map(val => val.image.url.replace(/.+\/(.+?\.jpeg$)/, '$1'));
-  // const file = (await Fse.readdir('./images')).filter(val => /\.(jpeg|jpg)$/.test(val) && !cdnImages.includes(val));
+  await Promise.all(file.map(val => {
+    return Fse.remove(`./public/${val}`);
+  }));
 
-  // await Promise.all(file.map(val => {
-  //   return Fse.remove(`./images/${val}`);
-  // }));
-
- return {
+  return {
     props: {
       posts: posts.map(val => {
         return {

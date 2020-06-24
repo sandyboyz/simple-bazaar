@@ -62,7 +62,7 @@ export async function getStaticProps() {
     // const path = Path.resolve('./')
     const imageName = uri.replace(/.+\/(.+?\.jpeg$)/, '$1');
 
-    const exists = await new Promise(resolve => Fse.access(`images/${imageName}`, err => {
+    const exists = await new Promise(resolve => Fse.access(`./images/${imageName}`, err => {
       if (err) resolve(0);
       else resolve(1);
     }));
@@ -89,12 +89,12 @@ export async function getStaticProps() {
     return downloadImage(val.image.url);
   }));
   
-  const cdnImages = posts.map(val => val.image.url.replace(/.+\/(.+?\.jpeg$)/, '$1'));
-  const file = (await Fse.readdir('./images')).filter(val => /\.(jpeg|jpg)$/.test(val) && !cdnImages.includes(val));
+  // const cdnImages = posts.map(val => val.image.url.replace(/.+\/(.+?\.jpeg$)/, '$1'));
+  // const file = (await Fse.readdir('./images')).filter(val => /\.(jpeg|jpg)$/.test(val) && !cdnImages.includes(val));
 
-  await Promise.all(file.map(val => {
-    return Fse.remove(`./images/${val}`);
-  }));
+  // await Promise.all(file.map(val => {
+  //   return Fse.remove(`./images/${val}`);
+  // }));
 
   return {
     props: {

@@ -16,11 +16,11 @@ export default function Home(props) {
             Welcome to Bazaar
           </h1>
           <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
-            {typeof window !== 'undefined' && props.posts.map(val => {
+            {props.posts.map(val => {
               console.log(val.image.url);
               return <div key={val.id} className='bg-white rounded shadow-md p-4'>
                 <div>
-                  <img className='rounded-lg h-56 w-full' src={require(`../images/${val.image.url}`)}/>
+                  <img className='rounded-lg h-56 w-full' src={require(`../images/${val.image.url}?resize&size=300`)}/>
 
                 </div>
                 <div className='p-3'>

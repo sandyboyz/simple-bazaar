@@ -23,7 +23,7 @@ export default function Home(props) {
               return <div key={val.id} className='bg-white rounded shadow-md p-4'>
                 <div>
                   <div>
-                    <LazyLoadImage 
+                    {/* <LazyLoadImage 
                     
                     alt={val.image.url}
                     src={`/${val.image.url}`}
@@ -35,9 +35,9 @@ export default function Home(props) {
                     style={{height: '14rem', width: '100%'}}
                     // wrapperClassName='rounded-lg'
                     // className='rounded-lg h-56 w-fuull'
-                    />
+                    /> */}
                   </div>
-                  {/* <img className='rounded-lg h-56 w-full' src={`/${val.image.url}`}/> */}
+                  <img className='rounded-lg h-56 w-full' src={`/${val.image.url}`}/>
 
                 </div>
                 <div className='p-3'>

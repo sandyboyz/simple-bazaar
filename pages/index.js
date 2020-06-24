@@ -16,7 +16,7 @@ export default function Home(props) {
             Welcome to Bazaar
           </h1>
           <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
-            {props.posts.map(val => {
+            {typeof window !== 'undefined' && props.posts.map(val => {
               console.log(val.image.url);
               return <div key={val.id} className='bg-white rounded shadow-md p-4'>
                 <div>
@@ -89,6 +89,12 @@ export async function getStaticProps() {
     return downloadImage(val.image.url);
   }));
   
+
+  await new Promise(resolve => {
+    setTimeout(() => {
+      resolve(1);
+    }, 5000)
+  })
   // const cdnImages = posts.map(val => val.image.url.replace(/.+\/(.+?\.jpeg$)/, '$1'));
   // const file = (await Fse.readdir('./images')).filter(val => /\.(jpeg|jpg)$/.test(val) && !cdnImages.includes(val));
 

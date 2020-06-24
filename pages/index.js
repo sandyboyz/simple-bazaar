@@ -4,6 +4,7 @@ import Axios from 'axios';
 import Fse from 'fs-extra';
 
 export default function Home(props) {
+  if (typeof window !== 'undefined' && props.posts.length > 0){
   return (
     <React.Fragment>
       <Head>
@@ -16,7 +17,7 @@ export default function Home(props) {
             Welcome to Bazaar
           </h1>
           <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
-            {props.posts.map(val => {
+            {typeof window !== 'undefined' && props.posts.map(val => {
               console.log(val.image.url);
               return <div key={val.id} className='bg-white rounded shadow-md p-4'>
                 <div>
@@ -50,6 +51,8 @@ export default function Home(props) {
     </React.Fragment>
      
   )
+  }
+  return (<div>Test</div>)
 }
 
 export async function getStaticProps() {
@@ -102,7 +105,7 @@ export async function getStaticProps() {
   //   return Fse.remove(`./images/${val}`);
   // }));
 
-  return {
+ return {
     props: {
       posts: posts.map(val => {
         return {

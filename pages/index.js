@@ -41,7 +41,7 @@ export default function Home(props) {
 
                 </div>
                 <div className='p-3'>
-                 <p className='text-2xl'>{val.name}</p>
+                 <p className='text-2xl'>{val.title}</p>
                  <p className='text-lg text-gray-800'>Rp. {val.harga.toLocaleString('id-ID')}</p>
 
                 </div>
@@ -71,7 +71,7 @@ export default function Home(props) {
 
 export async function getStaticProps() {
   // Call an external API endpoint to get posts
-  const res = await fetch('https://wawo-bazaar.herokuapp.com/foods');
+  const res = await fetch('https://wawo-bazaar.herokuapp.com/products');
   const posts = await res.json();
 
   async function downloadImage (uri) {  
